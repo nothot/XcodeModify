@@ -1,0 +1,52 @@
+{
+  "comment": "xcode modify test",
+
+  "release_dir":"IOS",
+
+  "sys_frameworks": ["AdSupport"],
+
+  "sys_libs":["libz"],
+
+  "folders":["mod"],
+
+  "embed_binaries":["OnlineAHelper.framework"],
+
+  "plist":{
+  	"urltypes": [
+  	{
+  		"identifier": "mob",
+  		"role": "Editor",
+  		"schemes": ["mob-n-g100010"]
+  	},
+  	{
+  		"identifier": "weixin",
+  		"role": "Editor",
+  		"schemes": ["wxadb71714c0c9e679"]
+  	}
+    ],
+    "WX_KEY": "wxadb71714c0c9e679",
+    "CFBundleIdentifier":"com.duan.xcmodTest",
+    "NSAppTransportSecurity": {
+    	"NSAllowsArbitraryLoads": true
+    },
+    "LSApplicationQueriesSchemes": [
+    "weixin",
+    "wechat"
+    ]
+  },
+
+  "build_settings":{
+  	"ENABLE_BITCODE": "NO",
+  	"OTHER_LINKER_FLAGS": ["-ObjC"]
+  },
+
+  "resource_replace":[],
+
+  "file_remove":[],
+
+  "code_sign":{
+    "CODE_SIGN_IDENTITY":"iPhone Developer: mengmin duan (7324J8MZ4G)",
+    "PROVISIONING_PROFILE":"sdktest",
+    "DEVELOPMENT_TEAM":""
+  }
+}
