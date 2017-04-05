@@ -18,8 +18,10 @@ module XcodeModify
 					end
 				end
 			end
-			xcmod_file = File.read(xcmod_path)
-			@xcmod = JSON.parse(xcmod_file)
+			if xcmod_path
+				xcmod_file = File.read(xcmod_path)
+				@xcmod = JSON.parse(xcmod_file)
+			end
 			@embed_binaries = Array.new
 			@copy_files_build_phase = nil
 			@modify_with_copy = false
@@ -207,7 +209,10 @@ module XcodeModify
 
 		def  processs_sys_framework
 			puts "\nprocesss_sys_framework..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['sys_frameworks'].empty?
+				puts "Nothing to do."
+			end
 			@xcmod['sys_frameworks'].each do |framework|
 				unless phase_include?("#{framework}.framework", @target.frameworks_build_phase)
 					puts "add system framework: #{framework}.framework"
@@ -218,7 +223,10 @@ module XcodeModify
 
 		def  processs_sys_lib
 			puts "\nprocesss_sys_lib..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['sys_libs'].empty?
+				puts "Nothing to do."
+			end
 			@xcmod['sys_libs'].each do |lib|
 				unless phase_include?("#{lib}.dylib", @target.frameworks_build_phase)
 					puts "add system dylib: #{lib}.dylib"
@@ -231,7 +239,10 @@ module XcodeModify
 
 		def  process_folders
 			puts "\nprocess_folders..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['folders'].empty?
+				puts "Nothing to do."
+			end
 			@xcmod['folders'].each do |folder|
 				folder_path = "#{Dir.pwd}/#{folder}"
 				if @modify_with_copy
@@ -253,7 +264,10 @@ module XcodeModify
 
 		def process_embed_binaries
 			puts "\nprocess_embed_binaries..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['embed_binaries'].empty?
+				puts "Nothing to do."
+			end
 			@xcmod['embed_binaries'].each do |binary|
 				puts "add embed binary: #{binary}"
 				@embed_binaries << binary
@@ -262,7 +276,10 @@ module XcodeModify
 
 		def  process_plist
 			puts "\nprocess_plist..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['plist'].empty?
+				puts "Nothing to do."
+			end
 			project_path = @project.path
 			relative_plist_path = @target.build_configuration_list.build_settings('Release')['INFOPLIST_FILE']
 			plist_path = "#{project_path}/../#{relative_plist_path}"
@@ -309,7 +326,10 @@ module XcodeModify
 
 		def process_build_settings
 			puts "\nprocess_build_settings..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['build_settings'].empty?
+				puts "Nothing to do."
+			end
 			build_setings_hash = Hash[
 				'OTHER_LINKER_FLAGS' => 'OTHER_LDFLAGS'
 			]
@@ -330,7 +350,10 @@ module XcodeModify
 
 		def process_resource_replace
 			puts "\nprocess_resource_replace..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['resource_replace'].empty?
+				puts "Nothing to do."
+			end
 			resources_cover = @xcmod['resource_replace']
 			resoures_ref = @target.resources_build_phase.files_references
 			
@@ -364,7 +387,10 @@ module XcodeModify
 
 		def process_file_remove
 			puts "\nprocess_file_remove..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['file_remove'].empty?
+				puts "Nothing to do."
+			end
 			files_remove = @xcmod['file_remove']
 			files_remove.each do |file|
 				if is_resource(file)
@@ -396,7 +422,10 @@ module XcodeModify
 
 		def process_codesign
 			puts "\nprocess_codesign..."
-			puts "-----------------------------------------------"
+			puts "--------------------------------------------------"
+			if @xcmod['code_sign'].empty?
+				puts "Nothing to do."
+			end
 			# confirm codesign type [Automatic, Manual] and close push, gamecenter, iap capabilities
 			atts = @project.root_object.attributes['TargetAttributes']
 			atts.each do |att|
@@ -428,8 +457,25 @@ module XcodeModify
 			build_configurations.set_setting('PROVISIONING_PROFILE_SPECIFIER', codesign['PROVISIONING_PROFILE'])
 		end
 
-		def build_ipa(project_path)
-			system "xcodebuild -project #{project_path} -target #{@target.name} clean build"
+		def build_ipa(project_path, target_name = "", configuration = "Release", clean_before_build = true)
+			m_project = Xcodeproj::Project.open(project_path)
+			m_target = nil
+			if target_name.empty?
+				m_target = m_project.targets.first
+			else
+				for target in m_project.targets do
+					if target.name.eql?(target_name)
+						m_target = target
+						break;
+					end
+				end
+			end
+
+			cmd = "xcodebuild -project #{project_path} -target #{m_target.name} -configuration #{configuration} build"
+			if clean_before_build
+				cmd = "xcodebuild -project #{project_path} -target #{m_target.name} -configuration #{configuration} clean build"
+			end
+			system "#{cmd}"
 			cur_path = Dir.pwd
 			Dir.chdir "#{project_path}/../"
 			release_path = './Payload'
@@ -437,15 +483,21 @@ module XcodeModify
 				system "rm -r #{release_path}"
 			end
 			system "mkdir -p #{release_path}"
-			system "cp -r " << "./build/Release-iphoneos/#{@target.product_name}.app" << " #{release_path}"
-			system "zip -r -q #{@target.product_name}.ipa Payload"
+			system "cp -r " << "./build/#{configuration}-iphoneos/#{m_target.product_name}.app" << " #{release_path}"
+			system "zip -r -q #{m_target.product_name}.ipa Payload"
 			system "rm -r #{release_path}"
-			puts "********************* BUILD IPA SUCCCESS! ipa at: #{Dir.pwd}/#{@target.product_name}.ipa"
+			puts "********************* BUILD IPA SUCCCESS! *********************"
+			puts "ipa at: #{Dir.pwd}/#{m_target.product_name}.ipa"
 			Dir.chdir cur_path
 		end
 
+		def self.build_ipa(project_path, target_name = "", configuration = "Release", clean_before_build = true)
+			m_project = XCProject.new(project_path, nil)
+			m_project.build_ipa(project_path, target_name, configuration, clean_before_build)
+		end
+
 		def apply_modify(project_path_new = nil)
-			puts "\n=============================== modify start!"
+			puts "\n****************** MODIFY BEGIN ******************"
 			#prepare
 			if project_path_new
 				@modify_with_copy = true
@@ -489,7 +541,7 @@ module XcodeModify
 			else
 				@project.save
 			end
-			puts "\n============================ modify finished!"
+			puts "\n******************* MODIFY END *******************"
 		end
 	end
 end

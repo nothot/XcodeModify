@@ -9,4 +9,5 @@ project_path = 'xcmodTest/xcmodTest.xcodeproj'
 xcproject = XcodeModify::XCProject.new(project_path, 'xcmod.json')
 project_path_new = 'xcmodTest/xcmodTest2.xcodeproj'
 xcproject.apply_modify(project_path_new)
-#xcproject.build_ipa(project_path_new)
+xcproject.build_ipa(project_path_new)
+#XcodeModify::XCProject.build_ipa(project_path_new)
