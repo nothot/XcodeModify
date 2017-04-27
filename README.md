@@ -1,3 +1,4 @@
+## 介绍
 
 XcodeModify 是一个使用脚本来自动化配置xcode工程的工具
 
@@ -7,19 +8,17 @@ XcodeModify是ruby脚本，需要ruby环境，并安装xcodeproj，关于xcodepr
 
 你仅仅需要编辑一个配置文件，配置文件需命名为xcmod.json，XcodeModify会读取配置文件，并按照配置文件中的指令执行脚本，实现自动化调整xcode工程
 
-使用示例：
-
+## 使用示例
+```ruby
 project_path = '***/***.xcodeproj'
-
 xcproject = XcodeModify::XCProject.new(project_path, 'xcmod.json')
-
 project_path_new = '***/***.xcodeproj'
-
 xcproject.apply_modify(project_path_new)
-
+```
 apply_modify不指定参数时表示修改原工程，指定新的工程路径则生成新的调整后的工程
 
-下面给出xcmod.json支持的指令：
+## 命名介绍
+下面给出xcmod.json支持的命令：
 
 comment：注释
 
