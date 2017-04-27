@@ -1,2 +1,5 @@
-sample/xcmodTest/xcmodTest.xcodeproj/xcuserdata
-sample/xcmodTest/xcmodTest.xcodeproj/project.xcworkspace/xcuserdata
+sample/mod
+sample/test.rb
+sample/xcmodTest
+.DS_Store
+sample/.DS_Store
