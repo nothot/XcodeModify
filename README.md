@@ -10,8 +10,11 @@ XcodeModify是ruby脚本，需要ruby环境，并安装xcodeproj，关于xcodepr
 使用示例：
 
 project_path = '***/***.xcodeproj'
+
 xcproject = XcodeModify::XCProject.new(project_path, 'xcmod.json')
+
 project_path_new = '***/***.xcodeproj'
+
 xcproject.apply_modify(project_path_new)
 
 apply_modify不指定参数时表示修改原工程，指定新的工程路径则生成新的调整后的工程
