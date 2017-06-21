@@ -1,5 +1,5 @@
 {
-  "comment": "xcode modify test",
+  "comment": "本json文件提供修改示例",
 
   "release_dir":"IOS",
 
@@ -9,7 +9,7 @@
 
   "folders":["mod"],
 
-  "embed_binaries":["OnlineAHelper.framework"],
+  "embed_binaries":["someone.framework"],
 
   "plist":{
   	"urltypes": [
@@ -21,10 +21,10 @@
   	{
   		"identifier": "weixin",
   		"role": "Editor",
-  		"schemes": ["wxadb71714c0c9e679"]
+  		"schemes": ["wxadb7171fyjc9e679"]
   	}
     ],
-    "WX_KEY": "wxadb71714c0c9e679",
+    "WX_KEY": "wxadb717bgu0c9e679",
     "CFBundleIdentifier":"com.duan.xcmodTest",
     "NSAppTransportSecurity": {
     	"NSAllowsArbitraryLoads": true
@@ -45,8 +45,8 @@
   "file_remove":[],
 
   "code_sign":{
-    "CODE_SIGN_IDENTITY":"iPhone Developer: mengmin duan (7324J8MZ4G)",
-    "PROVISIONING_PROFILE":"sdktest",
+    "CODE_SIGN_IDENTITY":"iPhone Developer: mengmin duan (73JYJ8MZ4G)",
+    "PROVISIONING_PROFILE":"test",
     "DEVELOPMENT_TEAM":""
   }
 }
