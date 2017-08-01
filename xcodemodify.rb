@@ -116,6 +116,23 @@ module XcodeModify
 			flags_to_string
 		end
 
+
+		def dealwith_run_search_path(paths)
+			exists_paths = @target.build_configuration_list.get_setting('LD_RUNPATH_SEARCH_PATHS')['Release']
+			if exists_paths.class.name.eql?('Array')
+				paths = paths | exists_paths
+			elsif exists_paths.class.name.eql?('String')
+				paths = paths << exists_paths
+			end
+			paths_to_string = paths[0]
+			paths.each do |item|
+				unless item.eql?(paths[0])
+					paths_to_string << " #{item}"
+				end
+			end
+			paths_to_string
+		end
+
 		def get_copy_files_build_phase_for_framework
 			copy_files_build_phase = nil
 			for phase in @target.build_phases 
@@ -129,6 +146,7 @@ module XcodeModify
 			unless copy_files_build_phase
 				copy_files_build_phase = @target.new_copy_files_build_phase
 				copy_files_build_phase.symbol_dst_subfolder_spec=(:frameworks)		
+				copy_files_build_phase.name = 'Embed Frameworks'
 			end	
 			@copy_files_build_phase = copy_files_build_phase
 		end
@@ -188,6 +206,13 @@ module XcodeModify
 							framework_ref = group.new_reference(child_path)
 							@copy_files_build_phase.add_file_reference(framework_ref)
 							add_binary_search_path(child_path)
+							build_file = framework_ref.build_files.at(0)
+							build_file.settings = Hash[
+								'ATTRIBUTES' => Array["CodeSignOnCopy"]
+							]
+							build_configurations = @target.build_configuration_list
+							paths = Array["$(inherited)", "@executable_path/Frameworks"]
+							build_configurations.set_setting('LD_RUNPATH_SEARCH_PATHS', dealwith_run_search_path(paths))
 						end
 					elsif is_binary_library(child) && !is_embed_library(child) && !phase_include?(child, @target.frameworks_build_phase)
 						puts "add static framework: #{child_path}"
