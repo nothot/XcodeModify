@@ -6,7 +6,7 @@ XcodeModify是ruby脚本，需要ruby环境，并安装xcodeproj，关于xcodepr
 
 如何使用XcodeModify？
 
-你仅仅需要编辑一个配置文件，配置文件需命名为xcmod.json，XcodeModify会读取配置文件，并按照配置文件中的指令执行脚本，实现自动化调整xcode工程
+你仅仅需要编辑一个json配置文件（后缀为.json），XcodeModify会读取配置文件，并按照配置文件中的指令执行脚本，实现自动化调整xcode工程
 
 ## 使用示例
 ```ruby
