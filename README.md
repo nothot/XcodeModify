@@ -24,7 +24,7 @@ apply_modify不指定参数时表示修改原工程，指定新的工程路径�
 
 comment：注释
 
-release_dir：所有增加到工程中的文件都会统一放在此目录，你可以任意命名该目录的名字
+release_dir：所有增加到工程中的文件都会统一放在此目录，你可以任意的命名该目录的名字
 
 sys_frameworks：向工程增加系统framework的引用，该项对应一个数组，可以包含任意多个需要添加到工程的系统framework，注意framework名不需带后缀
 
