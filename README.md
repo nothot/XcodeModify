@@ -19,13 +19,14 @@ xcproject.apply_modify(project_path_new)
 apply_modify不指定参数时表示修改原工程，指定新的工程路径则生成新的调整后的工程
 
 ## 命名介绍
+
 下面给出json配置文件支持的命令：
 
 (默认情况下，json配置文件中任何目录都应该指定为绝对目录或者相对于终端当前目录的目录，以确保可以被索引到)
 
 comment：注释
 
-release_dir：所有增加到工程中的文件都会统一放在此目录，你可以任意命名该目录的名字
+release_dir：所有增加到工程中的文件都会统一放在此目录，你可以任意的命名该目录的名字
 
 sys_frameworks：向工程增加系统framework的引用，该项对应一个数组，可以包含任意多个需要添加到工程的系统framework，注意framework名不需带后缀
 
