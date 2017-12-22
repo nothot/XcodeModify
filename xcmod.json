@@ -7,7 +7,7 @@
 
   "sys_libs":["libz"],
 
-  "folders":["mod"],
+  "folders":["thirdKit"],
 
   "embed_binaries":["someone.framework"],
 
